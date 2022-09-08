@@ -6,7 +6,7 @@ const incomeE1 = document.querySelector("#income");
 const expenseE1 = document.querySelector("#expense");
 const allE1 = document.querySelector("#all");
 const incomeList = document.querySelector("#income .list");
-const expenseList = document.querySelector("#outcome .list");
+const expenseList = document.querySelector("#expense .list");
 const allList = document.querySelector("#all .list");
 
 
@@ -17,13 +17,13 @@ const allBtn = document.querySelector(".tab3");
 
 // input bts
 const addExpense = document.querySelector(".add-expense");
-const expenseTitle = document.querySelector("expense-title-input");
-const expenseAmount= document.querySelector("expense-amount-input");
+const expenseTitle = document.querySelector("#expense-title-input");
+const expenseAmount= document.querySelector("#expense-amount-input");
 
 
 const addIncome = document.querySelector(".add-income");
-const incomeTitle = document.querySelector("income-title-input");
-const incomeAmount= document.querySelector("income-amount-input");
+const incomeTitle = document.querySelector("#income-title-input");
+const incomeAmount= document.querySelector("#income-amount-input");
 
 // variables
 let ENTRY_LIST =[];
@@ -61,10 +61,10 @@ addExpense.addEventListener("click",function(){
     }
     ENTRY_LIST.push(expense);
     updateUI();
-    clearInput([expenseAmount.value , expenseAmount.value])
+    clearInput([expenseAmount , expenseAmount])
 
 })
-
+console.log(incomeAmount.value)
 addIncome.addEventListener("click",function(){
     if(!incomeTitle.value || !incomeAmount.value) return;
     let income ={
@@ -74,7 +74,7 @@ addIncome.addEventListener("click",function(){
     }
     ENTRY_LIST.push(income);
     updateUI();
-    clearInput([incomeAmount.value , incomeAmount.value])
+    clearInput([incomeAmount , incomeAmount])
 })
 //   HELPERS
 function updateUI(){
@@ -83,8 +83,41 @@ function updateUI(){
     balance=calculateTotal(income,outcome);
 
     // UPDATE UI
-    
+    clearElement([expenseList,incomeList,allList]);
+
+
+    // determine sigh of balance
+    let sign = (income >= outcome) ?"$":"-$";
+
+   ENTRY_LIST.forEach((entry,index)=>{
+    if(entry.type =="expense"){
+        showEntry(expenseList, entry.type,entry.title,entry.amount,index)
+    }
+    else if(entry.type == "income"){
+           showEntry(incomeList,entry.type,entry.title,entry.amount,index)
+    }
+    showEntry(allList,entry.type,entry.title,entry.amount,index)
+   });
 }
+function showEntry(list,type,title,amount,id){
+     const entry=` <li id="${id}" class="${type}">
+                     <div class="entry">${title}:$${amount}</div>
+                     <div id = "edit"></div>
+                     <div id="delete"></div>
+                      </li>`
+                      const position="afterbegin";
+                      list.insertAdjacentHTML(position,entry)
+}
+
+
+function clearElement(elements){
+    elements.forEach(element =>{
+        element.innerHTML = "";
+    })
+}
+
+
+
 function calculateTotal(type, list){
      let sum =0;
      list.forEach(entry =>{
